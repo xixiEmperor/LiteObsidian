@@ -1,0 +1,10 @@
+// 与 BridgeHint 子组件对应
+.bridge-hint {
+  margin: 0 0 1rem;
+  font-size: 0.875rem;
+  color: var(--color-muted);
+
+  &__accent {
+    color: var(--color-accent);
+  }
+}

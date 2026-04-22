@@ -1,0 +1,21 @@
+// 与 NoteListItem 子组件对应
+.note-list-item {
+  margin-bottom: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  border: 1px solid color-mix(in srgb, var(--color-text) 8%, transparent);
+
+  &__title {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+
+  &__pre {
+    margin: 0;
+    white-space: pre-wrap;
+    font-size: 0.8125rem;
+    color: var(--color-muted);
+  }
+}

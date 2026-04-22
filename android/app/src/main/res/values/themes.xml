@@ -1,0 +1,9 @@
+<resources>
+    <style name="Theme.LiteObsidian" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorOnPrimary">@color/on_primary</item>
+    </style>
+    <style name="Theme.LiteObsidian.Splash" parent="Theme.LiteObsidian">
+        <item name="android:windowFullscreen">true</item>
+    </style>
+</resources>

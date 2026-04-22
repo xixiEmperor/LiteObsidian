@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">LiteObsidian</string>
+    <string name="splash_subtitle">本地 Markdown 轻笔记</string>
+    <string name="action_settings">设置</string>
+    <string name="settings_title">关于 / 设置</string>
+    <string name="settings_back">返回</string>
+    <string name="settings_hint">课程设计骨架页：后续可接主题、关于文案等</string>
+</resources>
