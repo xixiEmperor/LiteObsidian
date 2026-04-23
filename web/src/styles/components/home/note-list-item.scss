@@ -6,6 +6,12 @@
   background: var(--color-surface);
   border: 1px solid color-mix(in srgb, var(--color-text) 8%, transparent);
 
+  &__link {
+    display: block;
+    color: inherit;
+    text-decoration: none;
+  }
+
   &__title {
     display: block;
     font-weight: 600;

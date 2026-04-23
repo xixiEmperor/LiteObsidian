@@ -84,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
         }
         // 注入名与开发文档 3.2.1 的 hybrid 方案一致，避免 $ 在部分注入场景的问题
         // 第二个参数为 JS 全局对象名：页面内即 window[JS_INTERFACE_NAME]，与 WebAppBridge 中 @JavascriptInterface 方法绑定。
-        w.addJavascriptInterface(new WebAppBridge(this), WebAppBridge.JS_INTERFACE_NAME);
+        w.addJavascriptInterface(new WebAppBridge(this, w), WebAppBridge.JS_INTERFACE_NAME);
     }
 
     @Override

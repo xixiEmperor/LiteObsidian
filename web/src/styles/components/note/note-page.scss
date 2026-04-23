@@ -1,0 +1,28 @@
+// 单篇编辑页（与 NotePage 对应）
+.note-page {
+  max-width: 48rem;
+
+  &__bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--note-page-bar-gap, 0.5rem);
+    margin-bottom: var(--note-page-bar-mb, 1rem);
+  }
+
+  &__title {
+    margin-bottom: var(--note-page-title-mb, 0.75rem);
+  }
+
+  &__body {
+    font-family: ui-monospace, monospace;
+  }
+
+  &__hint,
+  &__err {
+    color: var(--note-page-muted, #888);
+  }
+
+  &__err {
+    color: var(--note-page-err, #c00);
+  }
+}
