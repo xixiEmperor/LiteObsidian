@@ -6,6 +6,8 @@
     "scripts": {
         "dev": "vite",
         "build": "tsc -b && vite build",
+        "sync:android": "node ../scripts/sync-web-dist-to-android.mjs",
+        "build:android": "pnpm build && pnpm sync:android",
         "lint": "eslint .",
         "format": "prettier . --write",
         "format:check": "prettier . --check",

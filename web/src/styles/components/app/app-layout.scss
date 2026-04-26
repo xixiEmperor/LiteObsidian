@@ -1,29 +1,50 @@
 // 应用级壳层布局（与 components/app 对应）
 .app {
     min-height: 100%;
+    min-height: 100dvh;
     display: flex;
     flex-direction: column;
+    // 用柔和光斑给暗色背景增加层次，避免移动端长时间阅读疲劳
+    background:
+        radial-gradient(
+            circle at 100% -10%,
+            color-mix(in srgb, var(--color-accent) 10%, transparent),
+            transparent 42%
+        ),
+        var(--color-bg);
 
     &__header {
-        padding: var(--space) calc(var(--space) * 1.25);
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        // 这里把安全区一起算进内边距，刘海屏不会遮住标题
+        padding: calc(var(--safe-top) + 0.75rem)
+            calc(var(--space) * 1.25 + var(--safe-right))
+            0.75rem
+            calc(var(--space) * 1.25 + var(--safe-left));
         border-bottom: 1px solid
             color-mix(in srgb, var(--color-text) 12%, transparent);
+        background: color-mix(in srgb, var(--color-bg) 86%, transparent);
+        backdrop-filter: blur(10px);
     }
 
     &__title {
         margin: 0;
-        font-size: 1.125rem;
-        font-weight: 600;
+        font-size: clamp(1.1rem, 2.6vw, 1.25rem);
+        font-weight: 700;
+        letter-spacing: 0.01em;
     }
 
     &__sub {
         margin: 0.35rem 0 0;
-        font-size: 0.875rem;
+        font-size: 0.8125rem;
         color: var(--color-muted);
     }
 
     &__main {
         flex: 1;
-        padding: var(--space) calc(var(--space) * 1.25);
+        padding: 0.9rem calc(var(--space) * 1.25 + var(--safe-right))
+            calc(var(--space) * 1.25 + var(--safe-bottom))
+            calc(var(--space) * 1.25 + var(--safe-left));
     }
 }

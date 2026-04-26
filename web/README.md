@@ -12,7 +12,15 @@ pnpm dev
 
 ```bash
 pnpm build
-# 将 dist/ 整目录复制到 android/app/src/main/assets/dist/ 后再在 Android Studio 中运行
+```
+
+```bash
+pnpm sync:android
+```
+
+```bash
+pnpm build:android
+# 一条命令完成构建和同步，适合日常联调
 ```
 
 ## 目录说明
@@ -27,6 +35,7 @@ pnpm build
 - `src/types/`：与笔记/SQLite 对齐的类型
 
 更多流程见仓库根目录 `docs/课程设计开发文档.md`。
+回归步骤见仓库根目录 `docs/最小回归检查清单.md`。
 
 ## 开发规范
 

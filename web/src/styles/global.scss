@@ -2,12 +2,20 @@
 :root {
     --color-bg: #0f1419;
     --color-surface: #1a222c;
+    --color-surface-elevated: #212d39;
     --color-text: #e6edf3;
     --color-muted: #8b9bab;
     --color-accent: #58a6ff;
-    --font-sans: system-ui, -apple-system, 'Segoe UI', sans-serif;
-    --radius: 8px;
+    --font-sans:
+        'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', -apple-system,
+        'Segoe UI', sans-serif;
+    --radius: 12px;
+    --radius-sm: 10px;
     --space: 1rem;
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-right: env(safe-area-inset-right, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+    --safe-left: env(safe-area-inset-left, 0px);
 }
 
 * {
@@ -23,14 +31,76 @@ body,
 body {
     margin: 0;
     min-height: 100vh;
+    min-height: 100dvh;
     background: var(--color-bg);
     color: var(--color-text);
     font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.5;
     -webkit-font-smoothing: antialiased;
+}
+
+/* 统一移动端点击反馈，避免长按选中导致的误触体验 */
+a,
+button,
+[role='button'] {
+    -webkit-tap-highlight-color: transparent;
 }
 
 // 路由懒加载时 Suspense 占位（与 App.tsx 中 class 对应）
 .app-route-fallback {
     margin: 0;
     color: var(--color-muted);
+}
+
+/* 统一第三方组件和项目暗色主题的视觉语言 */
+.ant-btn,
+.ant-input,
+.ant-input-affix-wrapper,
+.ant-segmented {
+    border-color: color-mix(in srgb, var(--color-text) 14%, transparent);
+}
+
+.ant-btn-default {
+    color: var(--color-text);
+    background: color-mix(in srgb, var(--color-surface) 86%, transparent);
+}
+
+.ant-btn-default:hover,
+.ant-btn-default:focus-visible {
+    color: var(--color-text);
+    border-color: color-mix(in srgb, var(--color-accent) 40%, transparent);
+    background: color-mix(in srgb, var(--color-surface-elevated) 82%, transparent);
+}
+
+.ant-input,
+.ant-input-affix-wrapper,
+.ant-input-affix-wrapper .ant-input {
+    color: var(--color-text);
+    background: color-mix(in srgb, var(--color-surface) 88%, transparent);
+}
+
+.ant-input::placeholder {
+    color: color-mix(in srgb, var(--color-muted) 86%, transparent);
+}
+
+.ant-input-affix-wrapper:focus,
+.ant-input-affix-wrapper-focused,
+.ant-input:focus {
+    border-color: color-mix(in srgb, var(--color-accent) 48%, transparent);
+    box-shadow: 0 0 0 2px rgba(88, 166, 255, 0.2);
+}
+
+.ant-modal .ant-modal-content {
+    border: 1px solid color-mix(in srgb, var(--color-text) 12%, transparent);
+}
+
+.ant-modal .ant-modal-title {
+    color: var(--color-text);
+}
+
+.ant-message .ant-message-notice-wrapper .ant-message-notice-content {
+    color: var(--color-text);
+    border: 1px solid color-mix(in srgb, var(--color-text) 12%, transparent);
+    background: color-mix(in srgb, var(--color-surface-elevated) 88%, #000 12%);
 }

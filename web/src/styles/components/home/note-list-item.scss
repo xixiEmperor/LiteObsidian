@@ -1,10 +1,23 @@
 // 与 NoteListItem 子组件对应
 .note-list-item {
-    margin-bottom: 1rem;
-    padding: 0.75rem 1rem;
+    margin-bottom: 0.85rem;
+    padding: 0.9rem 1rem;
     border-radius: var(--radius);
-    background: var(--color-surface);
+    background: linear-gradient(
+        160deg,
+        color-mix(in srgb, var(--color-surface-elevated) 88%, #fff 12%),
+        var(--color-surface)
+    );
     border: 1px solid color-mix(in srgb, var(--color-text) 8%, transparent);
+    box-shadow: 0 10px 24px -18px rgba(0, 0, 0, 0.8);
+    transition:
+        transform 0.18s ease,
+        border-color 0.18s ease;
+
+    &:active {
+        transform: scale(0.996);
+        border-color: color-mix(in srgb, var(--color-accent) 35%, transparent);
+    }
 
     &__link {
         display: block;
@@ -12,10 +25,19 @@
         text-decoration: none;
     }
 
+    &__row {
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+        margin-bottom: 0.5rem;
+    }
+
     &__title {
         display: block;
-        font-weight: 600;
+        font-weight: 650;
         margin-right: 0.75rem;
+        font-size: 1rem;
+        line-height: 1.35;
     }
 
     &__head {
@@ -34,11 +56,12 @@
     &__pre {
         margin: 0;
         white-space: pre-wrap;
-        font-size: 0.8125rem;
+        font-size: 0.875rem;
+        line-height: 1.55;
         color: var(--color-muted);
         overflow: hidden;
         display: -webkit-box;
-        -webkit-line-clamp: 4;
+        -webkit-line-clamp: 3;
         -webkit-box-orient: vertical;
     }
 }

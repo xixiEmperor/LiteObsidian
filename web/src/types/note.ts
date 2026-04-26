@@ -5,4 +5,8 @@ export type Note = {
     contentMd: string
     updatedAt: number
     isDeleted?: number
+    isPinned?: number
+    isFavorite?: number
+    lastOpenedAt?: number
+    tags?: string[]
 }

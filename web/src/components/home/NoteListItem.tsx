@@ -1,10 +1,14 @@
-import { memo } from 'react'
+﻿import { memo } from 'react'
 import { Link } from 'react-router-dom'
+import { Checkbox, Tag } from 'antd'
 import type { Note } from '../../types/note'
 import '../../styles/components/home/note-list-item.scss'
 
 type NoteListItemProps = {
     note: Note
+    selectable: boolean
+    selected: boolean
+    onToggleSelect: (id: number, checked: boolean) => void
 }
 
 function formatUpdatedAt(ts: number): string {
@@ -19,18 +23,29 @@ function formatUpdatedAt(ts: number): string {
     }).format(ts)
 }
 
-// 列表项在笔记增多时由 memo 避免与兄弟项无关的重复渲染
 export const NoteListItem = memo(function NoteListItem({
     note,
+    selectable,
+    selected,
+    onToggleSelect,
 }: NoteListItemProps) {
-    const preview =
-        note.contentMd.trim().length === 0 ? '空内容' : note.contentMd
+    const preview = note.contentMd.trim().length === 0 ? '空内容' : note.contentMd
     return (
         <li className="note-list-item">
-            <Link
-                to={`/note/${String(note.id)}`}
-                className="note-list-item__link"
-            >
+            <div className="note-list-item__row">
+                {selectable && (
+                    <Checkbox
+                        checked={selected}
+                        onChange={(e) => onToggleSelect(note.id, e.target.checked)}
+                    />
+                )}
+                {note.isPinned === 1 && <Tag color="blue">置顶</Tag>}
+                {note.isFavorite === 1 && <Tag color="gold">收藏</Tag>}
+                {(note.tags ?? []).slice(0, 3).map((t) => (
+                    <Tag key={t}>{t}</Tag>
+                ))}
+            </div>
+            <Link to={`/note/${String(note.id)}`} className="note-list-item__link">
                 <div className="note-list-item__head">
                     <span className="note-list-item__title">{note.title}</span>
                     <time className="note-list-item__time">

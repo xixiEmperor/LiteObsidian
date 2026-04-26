@@ -1,4 +1,4 @@
-package com.liteobsidian.bridge;
+﻿package com.liteobsidian.bridge;
 
 import android.content.Context;
 import android.util.Base64;
@@ -14,41 +14,30 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-// WebView.addJavascriptInterface(本类实例, JS_INTERFACE_NAME) 之后，页面里的 JavaScript 可通过全局对象
-// window.hybrid（与 JS_INTERFACE_NAME 一致）访问本类中被 @JavascriptInterface 标注的方法。
-// 自 Android 4.2 起，供 JS 调用的方法必须带 @JavascriptInterface，否则不会暴露给 JS，这是安全基线。
-// 从 JS 调用 invoke 时，代码运行在 WebView 的桥接线程上：不要在这里直接改 UI；耗时操作应放到后台并在主线程汇总结果。
-// 与 H5 的契约：第一参为协议里的「方法名」字符串，第二参为该方法入参的 JSON 文本（无参可用 "{}" 或 ""，以团队约定为准）。
-
 /**
- * 与 H5 约定的统一入口：仅暴露 invoke(methodName, paramsJson)。后续按方法名分派到 SQLite 等。
+ * 与 H5 约定的统一入口：仅暴露 invoke(methodName, paramsJson)。
  */
 public final class WebAppBridge {
-    // 与开发文档 3.2.1 一致，便于在 Logcat 中过滤
     public static final String JS_INTERFACE_NAME = "hybrid";
     private static final String TAG = "WebAppBridge";
-    // 与 H5 约定的全局回调：主线程 evaluateJavascript 调起，入参为 JSON 对象
     private static final String JS_CALLBACK_GLOBAL = "liteobsidianOnNative";
-    // 单线程跑 Repository，避免与主线程 SQLite 争用；与桥接线程分离
     private static final ExecutorService DB_EXEC = Executors.newSingleThreadExecutor();
-    // ApplicationContext 避免内存泄漏
+
     private final Context appContext;
     private final WebView webView;
     private final NoteRepository noteRepository;
 
     public WebAppBridge(Context context, WebView webView) {
-        // 持有 ApplicationContext：避免间接长期引用 Activity 导致配置变更或旋转后仍持有已销毁的 Activity。
         this.appContext = context.getApplicationContext();
         this.webView = webView;
         this.noteRepository = new NoteRepository(this.appContext);
     }
 
-    // 与前端 window.hybrid.invoke(端方法名, 传参) 对应；第二参一般为 JSON 字符串
-    // 前端侧通常对对象做 JSON.stringify 后再传入；此处对 null 兜底为空串，避免原生解析前 NPE。
     @JavascriptInterface
     public void invoke(String methodName, String paramsJson) {
         if (methodName == null) {
@@ -63,7 +52,6 @@ public final class WebAppBridge {
         DB_EXEC.execute(() -> handleInvokeOnWorker(m, json));
     }
 
-    // 在 DB 线程解析分派，结果通过 deliver 切回主线程调 H5
     private void handleInvokeOnWorker(String methodName, String paramsJson) {
         JSONObject p;
         try {
@@ -91,6 +79,33 @@ public final class WebAppBridge {
                 case "deleteNote":
                     doDeleteNote(callbackId, p);
                     break;
+                case "setPinned":
+                    doSetPinned(callbackId, p);
+                    break;
+                case "setFavorite":
+                    doSetFavorite(callbackId, p);
+                    break;
+                case "updateNoteTags":
+                    doUpdateNoteTags(callbackId, p);
+                    break;
+                case "listTags":
+                    doListTags(callbackId);
+                    break;
+                case "getSettings":
+                    doGetSettings(callbackId);
+                    break;
+                case "saveSettings":
+                    doSaveSettings(callbackId, p);
+                    break;
+                case "importMarkdown":
+                    doImportMarkdown(callbackId, p);
+                    break;
+                case "exportNotes":
+                    doExportNotes(callbackId, p);
+                    break;
+                case "pickImage":
+                    doPickImage(callbackId, p);
+                    break;
                 default:
                     deliverError(callbackId, "E_UNKNOWN_METHOD", "unknown method: " + methodName);
             }
@@ -104,9 +119,12 @@ public final class WebAppBridge {
     }
 
     private void doListNotes(String callbackId, JSONObject p) throws JSONException {
+        String keyword = p.optString("keyword", "").trim();
+        String tag = p.optString("tag", "").trim();
+        boolean favoritesOnly = p.optBoolean("favoritesOnly", false);
         int offset = p.optInt("offset", 0);
         int limit = p.optInt("limit", 1000);
-        List<Note> list = noteRepository.list(offset, limit);
+        List<Note> list = noteRepository.listFiltered(offset, limit, keyword, tag, favoritesOnly);
         JSONArray arr = new JSONArray();
         for (Note n : list) {
             arr.put(noteToJson(n));
@@ -171,14 +189,129 @@ public final class WebAppBridge {
         deliverSuccess(callbackId, data);
     }
 
+    private void doSetPinned(String callbackId, JSONObject p) throws JSONException {
+        long id = p.optLong("id", -1L);
+        boolean pinned = p.optBoolean("pinned", false);
+        if (id <= 0) {
+            deliverError(callbackId, "E_BAD_PARAM", "missing id");
+            return;
+        }
+        noteRepository.setPinned(id, pinned);
+        JSONObject data = new JSONObject();
+        data.put("ok", true);
+        deliverSuccess(callbackId, data);
+    }
+
+    private void doSetFavorite(String callbackId, JSONObject p) throws JSONException {
+        long id = p.optLong("id", -1L);
+        boolean favorite = p.optBoolean("favorite", false);
+        if (id <= 0) {
+            deliverError(callbackId, "E_BAD_PARAM", "missing id");
+            return;
+        }
+        noteRepository.setFavorite(id, favorite);
+        JSONObject data = new JSONObject();
+        data.put("ok", true);
+        deliverSuccess(callbackId, data);
+    }
+
+    private void doUpdateNoteTags(String callbackId, JSONObject p) throws JSONException {
+        long id = p.optLong("id", -1L);
+        if (id <= 0) {
+            deliverError(callbackId, "E_BAD_PARAM", "missing id");
+            return;
+        }
+        JSONArray arr = p.optJSONArray("tags");
+        List<String> tags = new ArrayList<>();
+        if (arr != null) {
+            for (int i = 0; i < arr.length(); i++) {
+                String t = arr.optString(i, "").trim();
+                if (!t.isEmpty()) {
+                    tags.add(t);
+                }
+            }
+        }
+        noteRepository.updateTags(id, tags);
+        JSONObject data = new JSONObject();
+        data.put("ok", true);
+        deliverSuccess(callbackId, data);
+    }
+
+    private void doListTags(String callbackId) throws JSONException {
+        List<String> tags = noteRepository.listTags();
+        JSONObject data = new JSONObject();
+        data.put("tags", new JSONArray(tags));
+        deliverSuccess(callbackId, data);
+    }
+
+    private void doGetSettings(String callbackId) throws JSONException {
+        JSONObject data = noteRepository.getSettings();
+        deliverSuccess(callbackId, data);
+    }
+
+    private void doSaveSettings(String callbackId, JSONObject p) throws JSONException {
+        noteRepository.saveSettings(p);
+        JSONObject data = noteRepository.getSettings();
+        deliverSuccess(callbackId, data);
+    }
+
+    private void doImportMarkdown(String callbackId, JSONObject p) throws JSONException {
+        String title = p.optString("title", "");
+        String text = p.optString("text", "");
+        long id = noteRepository.insert(title, text);
+        JSONObject data = new JSONObject();
+        data.put("ok", true);
+        data.put("id", id);
+        deliverSuccess(callbackId, data);
+    }
+
+    private void doExportNotes(String callbackId, JSONObject p) throws JSONException {
+        JSONArray ids = p.optJSONArray("ids");
+        if (ids == null || ids.length() == 0) {
+            deliverError(callbackId, "E_BAD_PARAM", "ids is empty");
+            return;
+        }
+        String format = p.optString("format", "md");
+        List<Long> idList = new ArrayList<>();
+        for (int i = 0; i < ids.length(); i++) {
+            idList.add(ids.optLong(i));
+        }
+        List<Note> notes = noteRepository.listByIds(idList);
+        StringBuilder out = new StringBuilder();
+        for (int i = 0; i < notes.size(); i++) {
+            Note n = notes.get(i);
+            out.append("# ").append(n.title).append("\n\n").append(n.contentMd == null ? "" : n.contentMd);
+            if (i < notes.size() - 1) {
+                out.append("\n\n---\n\n");
+            }
+        }
+        JSONObject data = new JSONObject();
+        data.put("ok", true);
+        data.put("text", out.toString());
+        data.put("fileName", "notes-export." + ("zip".equals(format) ? "zip" : "md"));
+        deliverSuccess(callbackId, data);
+    }
+
+    private void doPickImage(String callbackId, JSONObject p) throws JSONException {
+        String source = p.optString("source", "gallery");
+        String markdown = "![" + source + "](/mock-images/" + System.currentTimeMillis() + ".jpg)";
+        JSONObject data = new JSONObject();
+        data.put("ok", true);
+        data.put("markdown", markdown);
+        deliverSuccess(callbackId, data);
+    }
+
     private static JSONObject noteToJson(Note n) throws JSONException {
         JSONObject o = new JSONObject();
         o.put("id", n.id);
         o.put("title", n.title);
         o.put("contentMd", n.contentMd);
-        // 与任务 W-4 一致：毫秒时间戳数字
         o.put("updatedAt", n.updatedAt);
         o.put("isDeleted", n.isDeleted);
+        o.put("isPinned", n.isPinned);
+        o.put("isFavorite", n.isFavorite);
+        o.put("lastOpenedAt", n.lastOpenedAt);
+        o.put("tags", new JSONArray(n.tags));
         return o;
     }
 
@@ -203,7 +336,6 @@ public final class WebAppBridge {
         }
     }
 
-    // 经 Base64 传入整段 JSON，避免在 JS 字符串里手工转义引号与换行
     private void deliver(JSONObject envelope) {
         String json = envelope.toString();
         byte[] utf8 = json.getBytes(StandardCharsets.UTF_8);
