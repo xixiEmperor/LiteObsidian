@@ -1,28 +1,100 @@
 // 单篇编辑页（与 NotePage 对应）
 .note-page {
-  max-width: 48rem;
+    max-width: 48rem;
 
-  &__bar {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--note-page-bar-gap, 0.5rem);
-    margin-bottom: var(--note-page-bar-mb, 1rem);
-  }
+    &__bar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--note-page-bar-gap, 0.5rem);
+        margin-bottom: var(--note-page-bar-mb, 1rem);
+    }
 
-  &__title {
-    margin-bottom: var(--note-page-title-mb, 0.75rem);
-  }
+    &__title {
+        margin-bottom: var(--note-page-title-mb, 0.75rem);
+    }
 
-  &__body {
-    font-family: ui-monospace, monospace;
-  }
+    &__body {
+        font-family: ui-monospace, monospace;
+    }
 
-  &__hint,
-  &__err {
-    color: var(--note-page-muted, #888);
-  }
+    &__preview {
+        min-height: 20rem;
+        padding: 0.75rem 0.875rem;
+        border: 1px solid color-mix(in srgb, var(--color-text) 12%, transparent);
+        border-radius: var(--radius);
+        background: color-mix(in srgb, var(--color-surface) 92%, #fff 8%);
+        line-height: 1.65;
 
-  &__err {
-    color: var(--note-page-err, #c00);
-  }
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            margin: 1rem 0 0.5rem;
+            line-height: 1.3;
+        }
+
+        p {
+            margin: 0.65rem 0;
+        }
+
+        ul {
+            margin: 0.5rem 0;
+            padding-left: 1.25rem;
+        }
+
+        code {
+            padding: 0.1rem 0.3rem;
+            border-radius: 6px;
+            background: color-mix(in srgb, var(--color-text) 10%, transparent);
+            font-family: ui-monospace, monospace;
+        }
+
+        pre {
+            margin: 0.75rem 0;
+            padding: 0.75rem;
+            border-radius: 6px;
+            overflow: auto;
+            background: color-mix(in srgb, var(--color-text) 9%, transparent);
+        }
+
+        pre code {
+            padding: 0;
+            background: transparent;
+        }
+    }
+
+    &__status {
+        margin: 0 0 0.75rem;
+        font-size: 0.8125rem;
+        color: var(--color-muted);
+    }
+
+    &__status--saving {
+        color: #faad14;
+    }
+
+    &__status--saved {
+        color: #73d13d;
+    }
+
+    &__status--error {
+        color: var(--note-page-err, #c00);
+    }
+
+    &__leave-hint {
+        margin-top: 0.5rem;
+        font-size: 0.75rem;
+        color: #faad14;
+    }
+
+    &__hint,
+    &__err {
+        color: var(--note-page-muted, #888);
+    }
+
+    &__err {
+        color: var(--note-page-err, #c00);
+    }
 }

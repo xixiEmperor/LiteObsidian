@@ -1,36 +1,36 @@
 // 全局样式：用 CSS 自定义属性，避免 $ 变量；可在此处集中维护主题
 :root {
-  --color-bg: #0f1419;
-  --color-surface: #1a222c;
-  --color-text: #e6edf3;
-  --color-muted: #8b9bab;
-  --color-accent: #58a6ff;
-  --font-sans: system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --radius: 8px;
-  --space: 1rem;
+    --color-bg: #0f1419;
+    --color-surface: #1a222c;
+    --color-text: #e6edf3;
+    --color-muted: #8b9bab;
+    --color-accent: #58a6ff;
+    --font-sans: system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --radius: 8px;
+    --space: 1rem;
 }
 
 * {
-  box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 html,
 body,
 #root {
-  height: 100%;
+    height: 100%;
 }
 
 body {
-  margin: 0;
-  min-height: 100vh;
-  background: var(--color-bg);
-  color: var(--color-text);
-  font-family: var(--font-sans);
-  -webkit-font-smoothing: antialiased;
+    margin: 0;
+    min-height: 100vh;
+    background: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
 }
 
 // 路由懒加载时 Suspense 占位（与 App.tsx 中 class 对应）
 .app-route-fallback {
-  margin: 0;
-  color: var(--color-muted);
+    margin: 0;
+    color: var(--color-muted);
 }

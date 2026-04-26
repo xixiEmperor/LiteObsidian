@@ -1,14 +1,25 @@
 // 首页根容器（与 components/home/HomePage 对应）
 .home-page {
-  max-width: 40rem;
+    max-width: 40rem;
 
-  &__toolbar {
-    display: flex;
-    gap: var(--home-gap, 0.5rem);
-    margin-bottom: var(--home-toolbar-mb, 1rem);
-  }
+    &__toolbar {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: var(--home-gap, 0.5rem);
+        margin-bottom: var(--home-toolbar-mb, 1rem);
+    }
 
-  &__hint {
-    color: var(--home-hint-fg, #888);
-  }
+    &__search {
+        min-width: min(20rem, 100%);
+        flex: 1;
+    }
+
+    &__hint {
+        color: var(--home-hint-fg, #888);
+    }
+
+    &__err {
+        color: var(--home-err-fg, #ff7875);
+    }
 }

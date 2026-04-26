@@ -1,28 +1,29 @@
 // 应用级壳层布局（与 components/app 对应）
 .app {
-  min-height: 100%;
-  display: flex;
-  flex-direction: column;
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
 
-  &__header {
-    padding: var(--space) calc(var(--space) * 1.25);
-    border-bottom: 1px solid color-mix(in srgb, var(--color-text) 12%, transparent);
-  }
+    &__header {
+        padding: var(--space) calc(var(--space) * 1.25);
+        border-bottom: 1px solid
+            color-mix(in srgb, var(--color-text) 12%, transparent);
+    }
 
-  &__title {
-    margin: 0;
-    font-size: 1.125rem;
-    font-weight: 600;
-  }
+    &__title {
+        margin: 0;
+        font-size: 1.125rem;
+        font-weight: 600;
+    }
 
-  &__sub {
-    margin: 0.35rem 0 0;
-    font-size: 0.875rem;
-    color: var(--color-muted);
-  }
+    &__sub {
+        margin: 0.35rem 0 0;
+        font-size: 0.875rem;
+        color: var(--color-muted);
+    }
 
-  &__main {
-    flex: 1;
-    padding: var(--space) calc(var(--space) * 1.25);
-  }
+    &__main {
+        flex: 1;
+        padding: var(--space) calc(var(--space) * 1.25);
+    }
 }
